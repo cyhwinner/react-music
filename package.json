@@ -7,9 +7,11 @@
     "@svgr/webpack": "4.1.0",
     "@types/fastclick": "^1.0.28",
     "@types/jest": "24.0.11",
+    "@types/lodash": "^4.14.123",
     "@types/node": "11.13.4",
     "@types/react": "16.8.13",
     "@types/react-dom": "16.8.4",
+    "axios": "^0.18.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "9.0.0",
     "babel-jest": "23.6.0",
@@ -32,12 +34,15 @@
     "fastclick": "^1.0.6",
     "file-loader": "2.0.0",
     "fs-extra": "7.0.1",
+    "good-storage": "^1.1.0",
     "html-webpack-plugin": "4.0.0-alpha.2",
     "identity-obj-proxy": "3.0.0",
     "jest": "23.6.0",
     "jest-pnp-resolver": "1.0.2",
     "jest-resolve": "23.6.0",
     "jest-watch-typeahead": "^0.2.1",
+    "jsonp": "^0.2.1",
+    "lodash": "^4.17.11",
     "mini-css-extract-plugin": "0.5.0",
     "node-sass": "^4.11.0",
     "optimize-css-assets-webpack-plugin": "5.0.1",
@@ -52,7 +57,10 @@
     "react-dom": "^16.8.6",
     "react-redux": "^7.0.2",
     "react-router-dom": "^5.0.0",
+    "react-transition-group": "^2.5.3",
     "redux": "^4.0.1",
+    "redux-logger": "^3.0.6",
+    "redux-thunk": "^2.3.0",
     "resolve": "1.10.0",
     "sass-loader": "7.1.0",
     "style-loader": "0.23.1",
@@ -65,9 +73,11 @@
     "workbox-webpack-plugin": "3.6.3"
   },
   "scripts": {
-    "start": "node scripts/start.js",
+    "start": "concurrently \"npm:dev\" \"npm:server\"",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js"
+    "test": "node scripts/test.js",
+    "dev": "node scripts/start.js",
+    "server": "node scripts/server.js"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -130,7 +140,12 @@
   },
   "devDependencies": {
     "@types/better-scroll": "^1.12.1",
-    "@types/react-redux": "^7.0.6",
-    "@types/react-router-dom": "^4.3.2"
-  }
+    "@types/react-redux": "^7.0.8",
+    "@types/react-router-dom": "^4.3.2",
+    "@types/react-transition-group": "^2.0.15",
+    "@types/redux-logger": "^3.0.7",
+    "@types/redux-thunk": "^2.1.0",
+    "concurrently": "^4.1.0"
+  },
+  "proxy": "http://localhost:3112"
 }
