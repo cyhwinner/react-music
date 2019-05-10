@@ -1,5 +1,5 @@
 import * as types from './actionsTypes'
-import { IUserName, IActionCreator } from 'store/stateTypes'
+import { IUserName, IActionCreator } from 'store/stateTypes';
 
 export const setUserName : IActionCreator = (userName : IUserName) => {
     return {
@@ -7,4 +7,3 @@ export const setUserName : IActionCreator = (userName : IUserName) => {
         userName
     }
 }
- 

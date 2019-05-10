@@ -1,11 +1,17 @@
 import React, {Component} from 'react';
 import { getRecommend, getDiscList } from 'api/recommend';
 import './recommend.scss';
+import { connect } from 'react-redux';
 import { ERR_OK } from 'api/config';
 import Carousel from 'reuse/carousel/Carousel';
 import Scroll from 'reuse/scroll/Scroll';
 import LazyImage from 'reuse/lazyimg/lazyImg';
 import Loading from 'reuse/loading/Loading';
+import {Route, withRouter } from 'react-router';
+import Disc from 'components/disc/Disc';
+import { setDisc } from 'actions/disc'
+import { IDisc } from 'store/stateTypes'
+import { Dispatch } from 'redux';
 
 interface Props {
   setDisc: Function,
@@ -62,7 +68,7 @@ class Recommend extends Component<Props, State> {
     })
   }
   getDiscList() {
-    getDiscList().then(res => {
+    getDiscList().then((res) => {
       if (res.code === ERR_OK && !this.unmountedFlag) {
         this.setState({
           discList: res.data.list
@@ -70,7 +76,7 @@ class Recommend extends Component<Props, State> {
       }
     }) 
   }
-  selectDisc(disc: any) {
+  selectDisc = (disc: any) => {
     this.props.history.push(`/recommend/${disc.dissid}`);
     this.props.setDisc(disc);
   } 
@@ -130,9 +136,16 @@ class Recommend extends Component<Props, State> {
                 </div>
               }
             </Scroll>
+            <Route path="/recommend/:id" component={Disc} />
           </div>
         )
     }
 }
 
-export default Recommend;
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+  setDisc: (disc: IDisc) => {
+    dispatch(setDisc(disc))
+  }
+})
+
+export default withRouter(connect(() => ({}), mapDispatchToProps)(Recommend));

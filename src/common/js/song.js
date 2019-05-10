@@ -3,7 +3,7 @@ import { ERR_OK } from 'api/config';
 import { Base64 } from 'js-base64';
 
 export default class Song {
-  constructor(id, mid, singer, name, album, duration, img, url) {
+  constructor({id, mid, singer, name, album, duration, img, url}) {
     this.id = id;
     this.mid = mid;
     this.singer = singer;
