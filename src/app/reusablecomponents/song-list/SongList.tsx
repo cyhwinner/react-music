@@ -25,7 +25,7 @@ class SongList extends Component<SongListProps, SongListState> {
   }
   getRankCls = (index: number) => {
     if (index <= 2) {
-      return `icon icon${name}`;
+      return `icon icon${index}`;
     } else {
       return 'text';
     }
@@ -52,7 +52,7 @@ class SongList extends Component<SongListProps, SongListState> {
                 </div>
                 <div className="content">
                   <h2 className="name">{item.name}</h2>
-                  <p className="desc">{`${item.singer}·${item.album}`}</p>
+                  <p className="desc">{`${item.singer}·${item.alubm}`}</p>
                 </div>
               </li>
             ))

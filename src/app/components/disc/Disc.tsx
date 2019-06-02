@@ -79,7 +79,7 @@ class DiscBase extends Component<DiscBasePropType, DiscBaseStateType> {
           this.props.history.goBack()
         }}
         >
-          <MusicList singName={disc.dissname} bgImage={disc.imgurl} songs={songs} back={this.back}> </MusicList>
+          <MusicList singerName={disc.dissname} bgImage={disc.imgurl} songs={songs} back={this.back}> </MusicList>
       </CSSTransition>
     ) 
   }

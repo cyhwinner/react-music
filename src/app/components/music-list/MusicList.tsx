@@ -142,7 +142,7 @@ class MusicList extends Component<MusicListProps, MusicListState> {
     if (this.props.mode === playMode.random) {
       let randomList = shuffle(this.props.songs);
       this.props.setPlayList(randomList);
-      index = randomList.findIndex((item) => item.id === this.props.songs[index].id); 
+      index = randomList.findIndex((item :any) => item.id === this.props.songs[index].id); 
     } else {
       this.props.setPlayList(this.props.songs);
     }
@@ -150,14 +150,14 @@ class MusicList extends Component<MusicListProps, MusicListState> {
     this.props.setFullScreen(true);
     this.props.setCurrentIndex(index);
   }
-  random = () => {
+  random = () =>  {
     let randomList = shuffle(this.props.songs);
     this.props.setPlayMode(playMode.random);
     this.props.setSequenceList(this.props.songs);
-    this.props.setPlayList(randomList)
-    this.props.setFullScreen(true)
-    this.props.setCurrentIndex(0)
-    this.props.setPlaying(true)
+    this.props.setPlayList(randomList);
+    this.props.setFullScreen(true);
+    this.props.setCurrentIndex(0);
+    this.props.setPlaying(true);
   }
   render() {
     const { bgImage, songs, singerName } = this.props;
@@ -183,7 +183,7 @@ class MusicList extends Component<MusicListProps, MusicListState> {
         <div className="bg-layer" ref={this.layer}></div>
         <Scroll className="list" probeType={3} ref={this.list} scrollHandler={this.scrollHandler}>
           <div className="song-list-wrapper">
-            <SongList songs={songs} rank={rank} selectItem={this.selectSong} />
+            <SongList songs={songs} rank={rank} selectItem={this.selectSong } />
           </div>
           {
             !songs.length && 
@@ -211,13 +211,13 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
       dispatch(setFullScreen(fullScreen));
     },
     setSequenceList(list: ISequenceList) {
-      dispatch(setPlaying(list));
+      dispatch(setSequenceList(list));
     },
     setPlayList(list: IPlaylist) {
-      dispatch(setPlaying(list));
+      dispatch(setPlaylist(list));
     },
     setCurrentIndex(index: ICurrentIndex) {
-      dispatch(setPlaying(index));
+      dispatch(setCurrentIndex(index));
     },
     setPlayMode(mode: IMode) {
       dispatch(setPlayMode(mode))

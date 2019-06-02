@@ -1,0 +1,221 @@
+import React, { Component } from 'react';
+import './Search.scss';
+import SearchBox from 'reuse/search-box/SearchBox';
+import { getHotKey, search } from 'api/search';
+import { ERR_OK } from 'api/config';
+import Suggest from 'components/suggest/Suggest';
+import { createSongSearch } from 'common/js/song';
+import { Route, withRouter } from 'react-router';
+import SingerDetail from '../singer-detail/SingerDetail';
+import { connect } from 'react-redux';
+import { setSearchHistory} from 'actions/search';
+import { saveSearch, deleteSearch, clearSearch } from 'common/js/cache' ;
+import SearchList from 'reuse/search-list/SearchList';
+import Confirm from 'reuse/confirm/Confirm';
+import {
+  IStoreState,
+  ISearchHistory
+} from 'store/stateTypes';
+import { Dispatch } from 'redux';
+
+const TYPE_SINGER = 'singer';
+const perpage = 20;
+
+interface SearchPropType {
+  setSearchHistory: Function;
+  searchHistory: ISearchHistory;
+}
+
+interface SearchStateType {
+  hotKey: Array<any>;
+  query: string;
+  page: number;
+  result: Array<any>;
+  hasMore: boolean;
+}
+
+class Search extends Component<SearchPropType, SearchStateType> {
+  searchBox: React.RefObject<SearchBox>;
+  unmountedFlag: boolean;
+  confirm: React.RefObject<Confirm>;
+
+  constructor(props: SearchPropType) {
+    super(props);
+    this.searchBox = React.createRef();
+    this.unmountedFlag = false;
+    this.confirm = React.createRef();
+    this.state = {
+      hotKey: [],
+      query: '',
+      page: 1,
+      result: [],
+      hasMore: false
+    }
+  }
+
+  componentDidMount() {
+    this._getHotKey();
+  }
+  _getHotKey() {
+    getHotKey().then((res) => {
+      if (res.code === ERR_OK && !this.unmountedFlag) {
+        this.setState({
+          hotKey: res.data.hotkey.slice(0, 10)
+        })
+      }
+    })
+  }
+
+  onQueryChange = (query: string) => {
+    this.setState({
+      query
+    })
+    this.search(query);
+  }
+  addQuery = (query: string) => {
+    if (!this.searchBox.current) return;
+    this.searchBox.current.setQuery(query)
+    this.setState({
+      query
+    });
+    this.search(query);
+  }
+  search = (query: string) => {
+    this.setState({
+      page: 1,
+      hasMore: true
+    });
+    search(query, this.state.page, true, perpage).then((res) => {
+      if (res.code === ERR_OK && !this.unmountedFlag) {
+        this.setState({
+          result: this._getResult(res.data),
+          hasMore: this._checkMore(res.data)
+        })
+      }
+    })
+  }
+  _getResult = (data: any) => {
+    let ret = [];
+    if (data.zhida && data.zhida.zhida_singer && data.zhida.zhida_singer.singerID) {
+      ret.push({...data.zhida.zhida_singer, type: TYPE_SINGER})
+    }
+    if (data.song) {
+      ret = ret.concat(this._normalizeSongs(data.song.list));
+    }
+    return ret
+  }
+  _normalizeSongs (list: any) {
+    let ret: Array<any> = [];
+    list.forEach((musicData: any) => {
+      if (musicData.id && musicData.album.mid) {
+        ret.push(createSongSearch(musicData));
+      }
+    })
+    return ret;
+  }
+
+  _checkMore = (data: any) => {
+    const song = data.song;
+    if (!song.list.length || (song.curnum + song.curpage * perpage) > song.totalnum) {
+      return false;
+    }
+    return true;
+  }
+
+  searchMore = () => {
+    if (!this.state.hasMore) return;
+    this.setState((state) => ({
+      page: state.page + 1
+    }))
+    search(this.state.query, this.state.page, true, perpage).then((res) => {
+      this.setState({
+        result: this.state.result.concat(this._getResult(res.data)),
+        hasMore: this._checkMore(res.data)
+      })
+    })
+  }
+  saveSearch = () => {
+    this.props.setSearchHistory(saveSearch(this.state.query))
+  }
+  deleteSearch = (query: string) => {
+    this.props.setSearchHistory(deleteSearch(query))
+  }
+  clearSearchHistory = () => {
+    this.props.setSearchHistory(clearSearch())
+  }
+  showConfirm = () => {
+    if (!this.confirm.current) return;
+    this.confirm.current.show()
+  }
+  render(){
+    const {hotKey, query, result, hasMore, page} = this.state;
+    const { searchHistory } = this.props;
+    return (
+      <div className="search">
+        <div className="search-box-wrapper">
+          <SearchBox ref={this.searchBox} queryHandler={this.onQueryChange}></SearchBox>
+        </div>
+        <div className="shortcut-wrapper" style={{display: !query ? "" : "none"}}>
+          <div className="shortcut">
+            <div>
+              <div className="hot-key">
+                <h1 className="title">热门搜索</h1>
+                <ul>
+                  {
+                    !!hotKey.length && hotKey.map((item, index) => (
+                      <li key={index}
+                        className="item"
+                        onClick={() => this.addQuery(item.k)}>
+                          <span>{item.k}</span>
+                      </li>
+                    ))
+                  }
+                </ul>
+              </div>
+              <div className="search-history">
+                <h1 className="title">
+                  <span className="text">搜索历史</span>
+                  <span className="clear" onClick={this.showConfirm}>
+                    <i className="icon-clear"></i>
+                  </span>
+                </h1>
+                <SearchList 
+                  searches={searchHistory}
+                  selectItem={this.addQuery}
+                  deleteItem={this.deleteSearch} />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="search-result" style={{display: query ? "" : "none"}}>
+          <Suggest 
+            result={result}
+            hasMore={hasMore}
+            suggestHandler={this.searchMore}
+            page={page}
+            saveSearch={this.saveSearch} />
+        </div>
+        <Confirm 
+          ref={this.confirm}
+          text="是否清空所有搜索历史"
+          confirmBtnText="清空"
+          confirmHandler={this.clearSearchHistory} />
+          <Route path="/search/:id" component={SingerDetail} />
+      </div>
+    )
+  }
+}
+
+const mapStateToProps = (state: IStoreState) => ({
+  searchHistory: state.searchHistory
+})
+
+const mapDispatchToProps = (dispatch: Dispatch) => {
+  return {
+    setSearchHistory: (searchHistory: ISearchHistory) => {
+      dispatch(setSearchHistory(searchHistory))
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Search)

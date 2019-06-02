@@ -15,7 +15,7 @@ const store = configureStore(defaultState);
 fastClick.attach(document.body);
 ReactDOM.render(
   <Provider store={store}>
-    <BrowserRouter>
+    <BrowserRouter >
         <App />
     </BrowserRouter>
   </Provider>,

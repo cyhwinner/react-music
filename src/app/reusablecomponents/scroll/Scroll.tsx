@@ -73,10 +73,10 @@ export default class Scroll extends Component<scrollProps, scrollState> {
     this.wrapperBS && this.wrapperBS.refresh();
   }
   scrollTo(...args: any) {
-    this.wrapperBS && this.wrapperBS.scrollTo.apply(this);
+    this.wrapperBS && this.wrapperBS.scrollTo.apply(this.wrapperBS, args);
   }
-  scrollToElement(...agrs: any) {
-    this.wrapperBS && this.wrapperBS.scrollToElement.apply(this);
+  scrollToElement(...args: any) {
+    this.wrapperBS && this.wrapperBS.scrollToElement.apply(this.wrapperBS, args);
   }
   render() {
     return (

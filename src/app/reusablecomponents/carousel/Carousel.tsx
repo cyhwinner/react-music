@@ -154,9 +154,9 @@ class Carousel extends Component<componentsProps, componentState> {
         child.style.width = sliderWidth + 'px';
         // width += sliderWidth;
       }
-      // if (this.state.loop && !isResize) {
-      //   width += 2 * sliderWidth;
-      // }
+      if (this.state.loop && !isResize) {
+        // width += 2 * sliderWidth;
+      }
       this.carouseGroup.current.style.width = width + 'px';
       // Array.from(this.children).forEach(child => {
       //   addClass(child, 'carousel-item');

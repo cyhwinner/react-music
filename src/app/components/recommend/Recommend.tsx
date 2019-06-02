@@ -40,7 +40,6 @@ class Recommend extends Component<Props, State> {
     }
   }
   componentDidMount() {
-    console.log(cacheData);
     if (cacheData) {
       this.setState({
         recommend: cacheData.recommend,
@@ -56,7 +55,7 @@ class Recommend extends Component<Props, State> {
       recommend: this.state.recommend,
       discList: this.state.discList
     }
-    this.unmountedFlag = false;
+    this.unmountedFlag = true;
   }
   getRecommend() {
     getRecommend().then(res => {

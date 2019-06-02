@@ -11,6 +11,14 @@ export function addClass(el, className) {
   el.className = newClassName.join(' ');
 }
 
+export function getData(el, name, val) {
+  const prefix = 'data-';
+  if (val) {
+    return el.setAttribute(prefix + name, val);
+  }
+  return el.getAttribute(prefix + name);
+}
+
 const elementStyle = document.createElement('div').style;
 
 const vendor = (() => {
